@@ -13,8 +13,9 @@ Android está configurado con Firebase `futschool-2ef84`.
 **Estado: revisión pendiente, no listo para producción.** Falta registrar el
 certificado Android, confirmar el proveedor de correo y comprobar el acceso
 con cuentas reales. El propietario autorizó ejecutar las verificaciones en GitHub Actions;
-los resultados se consultan allí y la plantilla de evidencia se deja vacía. La vista web y el enlace para probar desde un
-teléfono siguen pendientes; no hay un sitio publicado.
+los resultados se consultan allí y la plantilla de evidencia se deja vacía.
+Firebase web ya tiene configuración cliente; falta comprobar el acceso real.
+El enlace para un teléfono fuera del equipo sigue pendiente; no hay sitio publicado.
 
 ## Estructura
 
@@ -50,12 +51,14 @@ flutter devices
 flutter run -d ID_DEL_DISPOSITIVO_ANDROID
 ```
 
-Completa primero [Firebase](docs/firebase.md). iOS, web y escritorio requieren
-configuración específica y aún no se han validado.
+Completa primero [Firebase](docs/firebase.md). Android y web tienen configuración
+cliente; iOS y escritorio requieren configuración específica. El acceso con
+cuentas reales sigue pendiente de validación.
 
 ## Trabajo del equipo
 
 - [Documentación](docs/README.md).
+- [Ejecutar localmente](docs/ejecucion-local.md).
 - [Product Backlog](docs/scrum/product-backlog.md).
 - [Sprint de autenticación](docs/scrum/sprint-01.md).
 - [Scrum, Definition of Ready y Definition of Done](docs/scrum/proceso.md).
