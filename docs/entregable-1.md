@@ -1,4 +1,4 @@
-# Sprint 01 · Acceso a FutSchool
+# Entregable 1 · Acceso a FutSchool
 
 Registro del incremento preparado, no acta de una ceremonia realizada.
 Periodo, capacidad, estimaciones y responsables: por acordar en Planning.
