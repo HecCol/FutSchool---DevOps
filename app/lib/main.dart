@@ -11,12 +11,10 @@ import 'features/auth/data/firebase_auth_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    // Web needs explicit options; Android reads its native configuration.
-    await Firebase.initializeApp(options: kIsWeb ? firebaseWebOptions : null);
-  } on FirebaseException {
-    runApp(const FutSchoolApp());
-    return;
-  } on PlatformException {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (_) {
     runApp(const FutSchoolApp());
     return;
   }

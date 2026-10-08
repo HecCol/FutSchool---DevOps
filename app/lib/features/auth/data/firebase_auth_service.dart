@@ -21,15 +21,12 @@ class FirebaseAuthService implements AuthService {
         'invalid-credential' ||
         'wrong-password' ||
         'user-not-found' => 'Correo o contraseña incorrectos.',
+        'email-already-in-use' => 'Este correo ya está registrado.',
+        'weak-password' => 'La contraseña debe tener al menos 6 caracteres.',
         'invalid-email' => 'Introduce un correo válido.',
         'user-disabled' => 'Esta cuenta está deshabilitada.',
         'network-request-failed' => 'Revisa tu conexión e intenta de nuevo.',
         'too-many-requests' => 'Demasiados intentos. Intenta más tarde.',
-        'unauthorized-domain' => 'Este dominio necesita autorización en Firebase para acceder con Google.',
-        'popup-blocked' =>
-          'Permite las ventanas emergentes para iniciar sesión con Google.',
-        'operation-not-allowed' =>
-          'Este método de acceso debe habilitarse en Firebase.',
         'account-exists-with-different-credential' =>
           'Inicia sesión con el método original de tu cuenta.',
         'popup-closed-by-user' ||
@@ -49,6 +46,20 @@ class FirebaseAuthService implements AuthService {
   Future<void> signIn(String email, String password) => _run(() async {
     await _auth.signInWithEmailAndPassword(email: email, password: password);
   });
+
+  @override
+  Future<void> signUp(String fullName, String email, String password) =>
+      _run(() async {
+        final credential = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        if (fullName.trim().isNotEmpty) {
+          await credential.user?.updateDisplayName(fullName.trim());
+        }
+        await credential.user?.sendEmailVerification();
+        await _auth.signOut();
+      });
 
   @override
   Future<void> signInWithGoogle() => _run(() async {
