@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/auth_service.dart';
+import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, this.auth});
@@ -67,12 +68,29 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(
-                      Icons.sports_soccer,
-                      size: 64,
-                      color: theme.colorScheme.primary,
+                    Center(
+                      child: Container(
+                        width: 72,
+                        height: 72,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.sports_soccer,
+                          size: 42,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     Text(
                       'FutSchool',
                       textAlign: TextAlign.center,
@@ -174,6 +192,30 @@ class _LoginPageState extends State<LoginPage> {
                     OutlinedButton(
                       onPressed: enabled ? () => _submit(google: true) : null,
                       child: const Text('Continuar con Google'),
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        const Text('¿No tienes cuenta?'),
+                        TextButton(
+                          onPressed: _busy
+                              ? null
+                              : () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          RegisterPage(auth: widget.auth),
+                                    ),
+                                  );
+                                },
+                          child: const Text(
+                            'Regístrate aquí',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
                     ),
                     if (_busy) ...[
                       const SizedBox(height: 16),

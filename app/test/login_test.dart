@@ -9,6 +9,7 @@ class TestAuth implements AuthService {
   final sessions = StreamController<bool>();
   int passwordCalls = 0;
   int googleCalls = 0;
+  int signUpCalls = 0;
   bool fail = false;
 
   @override
@@ -18,6 +19,12 @@ class TestAuth implements AuthService {
     passwordCalls++;
     if (fail) throw const AuthFailure('Correo o contraseña incorrectos.');
     sessions.add(true);
+  }
+
+  @override
+  Future<void> signUp(String fullName, String email, String password) async {
+    signUpCalls++;
+    if (fail) throw const AuthFailure('Este correo ya está registrado.');
   }
 
   @override
@@ -82,5 +89,30 @@ void main() {
     await tester.tap(find.text('Cerrar sesión'));
     await tester.pumpAndSettle();
     expect(find.text('Continuar con Google'), findsOneWidget);
+  });
+
+  testWidgets('Navega a la pantalla de crear cuenta y se registra', (
+    tester,
+  ) async {
+    await open(tester);
+    await tester.ensureVisible(find.text('Regístrate aquí'));
+    await tester.tap(find.text('Regístrate aquí'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Regístrate para continuar'), findsOneWidget);
+    expect(find.text('FUTSCHOOL ACADEMY'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'Juan Pérez');
+    await tester.enterText(find.byType(TextFormField).at(1), 'juan@ejemplo.edu');
+    await tester.enterText(find.byType(TextFormField).at(2), '123456');
+    await tester.enterText(find.byType(TextFormField).at(3), '123456');
+
+    final button = find.widgetWithText(ElevatedButton, 'Crear Cuenta');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+
+    expect(auth.signUpCalls, 1);
+    expect(find.text('Cuenta creada con éxito. Te enviamos un correo de verificación. Revisa tu bandeja de entrada e inicia sesión.'), findsOneWidget);
   });
 }
