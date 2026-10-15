@@ -74,7 +74,7 @@ class _MyTeamPageState extends State<MyTeamPage> {
               decoration: BoxDecoration(
                 color: cardBackgroundColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: primaryGreen.withOpacity(0.3)),
+                border: Border.all(color: primaryGreen.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
