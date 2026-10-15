@@ -1,7 +1,8 @@
-name: Validación Flutter manual
+name: Validación Flutter
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -25,13 +26,22 @@ jobs:
           flutter-version: '3.47.5'
           channel: stable
           cache: true
+      - name: Preparar configuración local de Android
+        run: rm -f android/local.properties
       - name: Resolver dependencias fijadas
+        id: dependencias
         run: flutter pub get --enforce-lockfile
       - name: Verificar formato
+        id: formato
         run: dart format --output=none --set-exit-if-changed lib test
       - name: Analizar código
+        id: analisis
         run: flutter analyze
+      - name: Compilar Android debug
+        id: build
+        run: flutter build apk --debug
       - name: Ejecutar pruebas de widgets
+        id: pruebas
         run: |
           mkdir -p test-results
           flutter test --machine | tee test-results/flutter-tests.jsonl
@@ -43,11 +53,33 @@ jobs:
           path: app/test-results/flutter-tests.jsonl
           if-no-files-found: ignore
           retention-days: 14
-      - name: Compilar Android debug
-        run: flutter build apk --debug
       - uses: actions/upload-artifact@v4
         with:
           name: futschool-debug-apk
           path: app/build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
           retention-days: 7
+      - name: Comunicar resultados
+        if: always()
+        working-directory: ${{ github.workspace }}
+        env:
+          DEPENDENCIAS: ${{ steps.dependencias.outcome }}
+          FORMATO: ${{ steps.formato.outcome }}
+          ANALISIS: ${{ steps.analisis.outcome }}
+          BUILD: ${{ steps.build.outcome }}
+          PRUEBAS: ${{ steps.pruebas.outcome }}
+        run: |
+          {
+            echo '## Pipeline CI de FutSchool'
+            echo '| Etapa | Resultado |'
+            echo '| --- | --- |'
+            echo "| Dependencias | $DEPENDENCIAS |"
+            echo "| Formato | $FORMATO |"
+            echo "| Análisis | $ANALISIS |"
+            echo "| Compilación Android | $BUILD |"
+            echo "| Pruebas de widgets | $PRUEBAS |"
+            echo ''
+            echo 'success = correcto; failure = falló; skipped = omitido; cancelled = cancelado.'
+            echo 'Abre el paso que falló en este job para consultar el error completo.'
+            echo 'Las etapas posteriores a una falla se omiten; el reporte se genera aunque fallen.'
+          } >> "$GITHUB_STEP_SUMMARY"
