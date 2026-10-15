@@ -61,7 +61,7 @@ class WelcomePage extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 28),
-// Segundo botón actualizado
+                // Segundo botón actualizado
                 FilledButton.icon(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -70,7 +70,9 @@ class WelcomePage extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.groups_outlined), // Ícono de equipo/grupo
+                  icon: const Icon(
+                    Icons.groups_outlined,
+                  ), // Ícono de equipo/grupo
                   label: const Text('Mi Equipo'),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
