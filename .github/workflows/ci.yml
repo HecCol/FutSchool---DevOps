@@ -35,3 +35,8 @@ jobs:
             fi
           done
           echo "Las carpetas app, ci y docs están presentes."
+
+  validar-flutter:
+    name: Validar Flutter
+    needs: validar-repositorio
+    uses: ./.github/workflows/flutter-validation.yml
