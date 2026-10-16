@@ -6,6 +6,21 @@ flujo de colaboración Scrum con integración por Pull Request.
 
 ## Estado del incremento
 
+El [login compartido y ambos roles](docs/roles-y-capitanes.md) conecta administrador
+y capitanes a Firestore: equipo propio, jugadores, inscripciones con revisión,
+torneos, calendario, resultados, configuración y privacidad. El incremento
+del 13 de octubre tiene [alcance Scrum](docs/scrum/sprint-03-roles.md) y
+[evidencia separada](docs/evidencias/validacion-roles.md). La [vista de QA local](docs/qa-local.md)
+permite revisar ambos roles con datos ficticios. La nueva versión de reglas y el
+claim del administrador real requieren activación; no se declara producción lista.
+
+El módulo de [administrador](docs/administrador.md) agrega torneos, equipos,
+partidos y marcadores sobre Firestore, con permisos verificados por Security Rules.
+Se trabaja en `feature/administrador`; ver [alcance y aceptación](docs/scrum/sprint-02-administrador.md).
+La activación de Firestore y del primer administrador se realiza según la guía.
+Los resultados locales del módulo están en [validación del administrador](docs/evidencias/validacion-admin.md);
+la plantilla histórica del login no reemplaza esta evidencia.
+
 El login sustituye la aplicación de ejemplo: correo y contraseña, Google,
 validación, mensajes de error, observación de sesión y cierre de sesión.
 Android está configurado con Firebase `futschool-2ef84`.
@@ -24,9 +39,15 @@ app/                       Cliente Flutter y proyectos de plataforma
   lib/app/                 Aplicación, tema y selección de pantalla
   lib/features/auth/       Presentación, contrato y servicio Firebase
   lib/features/home/       Bienvenida tras el acceso
+  lib/features/admin/      Administración, contratos y repositorio Firestore
+  lib/features/captain/    Equipo propio, integrantes y competición compartida
+  lib/features/privacy/    Aviso público accesible antes del registro
   lib/core/                Infraestructura compartida reservada
-  lib/shared/              Componentes compartidos reservados
-  test/                    Pruebas de widgets del login
+  lib/shared/              Componentes visuales compartidos
+  test/                    Pruebas de autenticación, permisos y administración
+tests/firestore/           Pruebas de reglas en emulador y dependencias fijadas
+scripts/grant-admin.cjs    Asignación del primer administrador por operador
+firestore.rules           Autorización y validación en servidor
 docs/                      Documentos originales y documentación técnica
   scrum/                   Backlog, sprint y acuerdos de trabajo
   adr/                     Decisiones de arquitectura

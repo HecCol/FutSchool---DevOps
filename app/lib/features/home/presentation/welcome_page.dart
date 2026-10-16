@@ -4,8 +4,9 @@ import '../../tournaments/presentation/tournaments_page.dart';
 import '../../teams/presentation/my_team_page.dart';
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key, this.onSignOut});
+  const WelcomePage({super.key, this.onSignOut, this.onRefreshAccess});
   final Future<void> Function()? onSignOut;
+  final Future<void> Function()? onRefreshAccess;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +85,13 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (onRefreshAccess != null) ...[
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: onRefreshAccess,
+                    child: const Text('Actualizar permisos'),
+                  ),
+                ],
                 if (onSignOut != null) ...[
                   const SizedBox(height: 24),
                   OutlinedButton(
