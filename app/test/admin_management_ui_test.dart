@@ -298,6 +298,10 @@ void main() {
         find.byKey(const ValueKey('adminAction:Gestionar torneos')),
       );
       await _tap(tester, find.text('Editar e inscripciones'));
+      await _tap(tester, find.text('Ver integrantes'));
+      expect(repository.rosterUid, 'captain-a');
+      expect(find.text('Jugador de prueba'), findsOneWidget);
+      expect(repository.registrationId, isNull);
       await _tap(
         tester,
         find.byKey(const ValueKey('approveRegistration:request')),

@@ -14,6 +14,44 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   WidgetController.hitTestWarningShouldBeFatal = true;
 
+  testWidgets('Lineup handles empty roster and updates from stored players', (
+    tester,
+  ) async {
+    final repository = _FakeCaptainRepository();
+    await _pump(tester, repository);
+    await _tap(tester, find.byKey(const ValueKey('captain-nav-2')));
+    await _tap(tester, find.byKey(const ValueKey('viewLineup')));
+    expect(
+      find.text('Agrega jugadores para ver la alineación.'),
+      findsOneWidget,
+    );
+    repository.players.set([
+      const CaptainPlayer(
+        id: '7',
+        name: 'Jugador alineación',
+        jerseyNumber: 7,
+        position: PlayerPosition.goalkeeper,
+      ),
+    ]);
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.text('Jugador alineación'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.text('Portero'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Agrega jugadores para ver la alineación.'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'Profile initialization failure blocks private data and retry recovers',
     (tester) async {

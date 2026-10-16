@@ -964,6 +964,11 @@ class _RegistrationReviewListState extends State<_RegistrationReviewList> {
                       }),
                       if (registration.reviewNote.isNotEmpty)
                         Text(registration.reviewNote),
+                      _RegistrationRoster(
+                        key: ValueKey('registrationRoster:${registration.id}'),
+                        repository: widget.repository,
+                        captainUid: registration.captainUid,
+                      ),
                       if (registration.status ==
                           RegistrationStatus.pending) ...[
                         const SizedBox(height: 12),
@@ -1002,6 +1007,66 @@ class _RegistrationReviewListState extends State<_RegistrationReviewList> {
           );
         },
       ),
+    ],
+  );
+}
+
+class _RegistrationRoster extends StatefulWidget {
+  const _RegistrationRoster({
+    super.key,
+    required this.repository,
+    required this.captainUid,
+  });
+  final AdminManagementRepository repository;
+  final String captainUid;
+  @override
+  State<_RegistrationRoster> createState() => _RegistrationRosterState();
+}
+
+class _RegistrationRosterState extends State<_RegistrationRoster> {
+  Stream<List<CaptainPlayer>>? _players;
+  @override
+  Widget build(BuildContext context) => ExpansionTile(
+    title: const Text('Ver integrantes'),
+    subtitle: const Text('Revisa la plantilla antes de decidir.'),
+    leading: const Icon(Icons.groups_outlined),
+    onExpansionChanged: (expanded) {
+      if (expanded && _players == null) {
+        setState(
+          () => _players = widget.repository.watchPlayers(widget.captainUid),
+        );
+      }
+    },
+    children: [
+      if (_players != null)
+        StreamBuilder<List<CaptainPlayer>>(
+          stream: _players,
+          builder: (context, snapshot) {
+            if (snapshot.hasError)
+              return _ErrorNotice(message: _safeError(snapshot.error!));
+            if (!snapshot.hasData) return const _Loading();
+            if (snapshot.data!.isEmpty)
+              return const _Empty('Este equipo todavía no tiene integrantes.');
+            return Column(
+              children: [
+                const Text('Plantilla actual del equipo'),
+                for (final player in snapshot.data!)
+                  ListTile(
+                    leading: CircleAvatar(
+                      child: Text('${player.jerseyNumber}'),
+                    ),
+                    title: Text(player.name),
+                    subtitle: Text(switch (player.position) {
+                      PlayerPosition.goalkeeper => 'Portero',
+                      PlayerPosition.defender => 'Defensa',
+                      PlayerPosition.midfielder => 'Mediocampista',
+                      PlayerPosition.forward => 'Delantero',
+                    }),
+                  ),
+              ],
+            );
+          },
+        ),
     ],
   );
 }

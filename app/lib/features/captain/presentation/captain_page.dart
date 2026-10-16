@@ -588,6 +588,21 @@ class _CaptainTeam extends StatelessWidget {
                   icon: const CaptainAsset('pencil'),
                   label: const Text('Editar equipo'),
                 ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  key: const ValueKey('viewLineup'),
+                  icon: const Icon(Icons.sports_soccer),
+                  label: const Text('Ver alineación'),
+                  onPressed: () => showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    useSafeArea: true,
+                    builder: (context) => FractionallySizedBox(
+                      heightFactor: .85,
+                      child: _CaptainLineup(repository: repository),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -598,6 +613,76 @@ class _CaptainTeam extends StatelessWidget {
         ],
       );
     },
+  );
+}
+
+class _CaptainLineup extends StatelessWidget {
+  const _CaptainLineup({required this.repository});
+  final CaptainRepository repository;
+  @override
+  Widget build(BuildContext context) => ListView(
+    padding: const EdgeInsets.all(24),
+    children: [
+      Row(
+        children: [
+          const Expanded(
+            child: Text(
+              'Alineación del equipo',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Cerrar alineación',
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close),
+          ),
+        ],
+      ),
+      const Text(
+        'Jugadores agrupados por su posición registrada. No distingue titulares ni suplentes.',
+      ),
+      const SizedBox(height: 16),
+      CaptainLive<List<CaptainPlayer>>(
+        watch: repository.watchPlayers,
+        builder: (context, players) => players.isEmpty
+            ? const Text('Agrega jugadores para ver la alineación.')
+            : Column(
+                children: [
+                  for (final position in _positions.entries)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: CaptainCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              position.value,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (!players.any(
+                              (player) => player.position == position.key,
+                            ))
+                              const Text('Sin jugadores en esta posición.'),
+                            for (final player in players.where(
+                              (player) => player.position == position.key,
+                            ))
+                              ListTile(
+                                leading: CircleAvatar(
+                                  child: Text('${player.jerseyNumber}'),
+                                ),
+                                title: Text(player.name),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+      ),
+    ],
   );
 }
 
