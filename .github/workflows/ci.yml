@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Verificar README
         run: |
@@ -35,3 +37,7 @@ jobs:
             fi
           done
           echo "Las carpetas app, ci y docs están presentes."
+      - name: Analizar código con SonarQube
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
