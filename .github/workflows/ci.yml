@@ -41,6 +41,10 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Fallo controlado para probar notificación
+        run: |
+          echo "Prueba intencional del aviso a Discord."
+          exit 1
       - name: Notificar fallo en Discord
         if: failure()
         env:
