@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Verificar README
         run: |
@@ -35,3 +37,19 @@ jobs:
             fi
           done
           echo "Las carpetas app, ci y docs están presentes."
+      - name: Analizar código con SonarQube
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Notificar fallo en Discord
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          MENSAJE="❌ Falló el CI de FutSchool. Revisa: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          jq -n --arg contenido "$MENSAJE" \
+            '{content: $contenido, allowed_mentions: {parse: []}}' > mensaje.json
+          curl --fail --silent --show-error \
+            -H "Content-Type: application/json" \
+            --data @mensaje.json \
+            "$DISCORD_WEBHOOK_URL"
