@@ -4,13 +4,23 @@
 **/coverage/
 **/test-results/
 **/.pub-cache/
+**/.pub/
+**/.flutter-plugins
 **/.flutter-plugins-dependencies
 **/.idea/
 **/.kotlin/
+**/.gradle/
+**/.cxx/
 *.iml
 *.log
 .DS_Store
 Thumbs.db
+
+# Configuración temporal de Flutter por plataforma
+**/Flutter/ephemeral/
+**/flutter/ephemeral/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
 
 # Configuración privada y certificados
 .env
