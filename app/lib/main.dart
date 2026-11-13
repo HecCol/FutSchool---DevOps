@@ -4,12 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'app/app.dart';
+import 'core/monitoring/firebase_monitoring.dart';
 import 'firebase_options.dart';
 import 'features/auth/data/firebase_auth_service.dart';
 import 'features/admin/data/firestore_admin_repository.dart';
 import 'features/admin/data/firestore_admin_management_repository.dart';
 import 'features/captain/data/firestore_captain_repository.dart';
 import 'features/privacy/data/firestore_privacy_repository.dart';
+import 'features/notifications/data/next_match_notifications.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +23,9 @@ Future<void> main() async {
     runApp(const FutSchoolApp());
     return;
   }
+  FirebaseMonitoring.installCrashHandlers();
+  await FirebaseMonitoring.sendDebugTestEventIfRequested();
+  await NextMatchNotifications.initialize();
   final auth = FirebaseAuth.instance;
   runApp(
     FutSchoolApp(

@@ -1,9 +1,11 @@
-# Notificaciones de cambios
+# Notificaciones de partidos
 
-Referencia: [backlog del producto](../../../../docs/scrum/product-backlog.md).
+Los capitanes pueden activar o cancelar un recordatorio local para su próximo
+partido programado. Se solicita permiso de notificaciones al activar el aviso;
+no se solicita al iniciar la app. El aviso se agenda una hora antes (o cinco
+minutos antes si falta menos de una hora), usando la zona horaria del teléfono.
 
-- `presentation/`: pantallas y estado visual.
-- `domain/`: modelos y reglas.
-- `data/`: fuentes de datos y repositorios.
-
-Módulo reservado; las funcionalidades se implementarán por historia.
+Los avisos se calculan en el dispositivo y no envían información del partido a
+un servicio de notificaciones. Android usa programación inexacta para no pedir
+el permiso especial de alarmas exactas. El sistema puede retrasar un aviso por
+ahorro de batería o por restricciones del fabricante.

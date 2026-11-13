@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../domain/captain_repository.dart';
 import 'captain_design.dart';
 import 'captain_forms.dart';
+import '../../weather/presentation/weather_card.dart';
+import '../../notifications/presentation/next_match_reminder_button.dart';
 
 class CaptainPage extends StatefulWidget {
   const CaptainPage({
@@ -303,6 +305,8 @@ class _CaptainHome extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 20),
+      const WeatherCard(),
+      const SizedBox(height: 20),
       _MyNextMatch(repository: repository),
       const SizedBox(height: 20),
       CaptainLive<List<AdminTournament>>(
@@ -423,8 +427,15 @@ class _MyNextMatch extends StatelessWidget {
                       const Text(
                         'Aún no tienes partidos programados. Se mostrarán después de aprobar tu inscripción.',
                       )
-                    else
+                    else ...[
                       _MatchContent(match: mine.first, teams: teams),
+                      const SizedBox(height: 12),
+                      NextMatchReminderButton(
+                        match: mine.first,
+                        homeTeam: _teamName(teams, mine.first.homeTeamId),
+                        awayTeam: _teamName(teams, mine.first.awayTeamId),
+                      ),
+                    ],
                   ],
                 ),
               );

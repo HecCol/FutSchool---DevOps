@@ -4,6 +4,9 @@ import 'dart:ui' as ui;
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'captain_design.dart';
 
@@ -39,6 +42,7 @@ class _CaptainTeamFormState extends State<CaptainTeamForm> {
   late String? _logo = widget.logoBase64;
   bool _saving = false;
   bool _choosingLogo = false;
+  final _imagePicker = ImagePicker();
   String? _error;
 
   @override
@@ -79,6 +83,45 @@ class _CaptainTeamFormState extends State<CaptainTeamForm> {
     } catch (_) {
       if (mounted) {
         setState(() => _error = 'No se pudo abrir el logo. Usa un PNG o JPEG.');
+      }
+    } finally {
+      if (mounted) setState(() => _choosingLogo = false);
+    }
+  }
+
+  Future<void> _takeLogoPhoto() async {
+    if (_saving || _choosingLogo) return;
+    setState(() {
+      _choosingLogo = true;
+      _error = null;
+    });
+    try {
+      if (!kIsWeb) {
+        final permission = await Permission.camera.request();
+        if (!permission.isGranted) {
+          throw const FormatException(
+            'Concede permiso de cámara para tomar el logo del equipo.',
+          );
+        }
+      }
+      final photo = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 65,
+        maxWidth: 1024,
+        maxHeight: 1024,
+      );
+      if (photo == null) return;
+      final bytes = await photo.readAsBytes();
+      final logo = await validatedCaptainLogo(bytes);
+      if (mounted) setState(() => _logo = logo);
+    } on FormatException catch (error) {
+      if (mounted) setState(() => _error = error.message);
+    } catch (_) {
+      if (mounted) {
+        setState(
+          () =>
+              _error = 'No se pudo tomar la foto. Revisa el permiso de cámara.',
+        );
       }
     } finally {
       if (mounted) setState(() => _choosingLogo = false);
@@ -151,6 +194,16 @@ class _CaptainTeamFormState extends State<CaptainTeamForm> {
                   icon: const Icon(Icons.upload_outlined),
                   label: Text(
                     _choosingLogo ? 'Abriendo...' : 'Subir logo PNG o JPEG',
+                  ),
+                ),
+                OutlinedButton.icon(
+                  key: const ValueKey('captain-camera-logo'),
+                  onPressed: _saving || _choosingLogo ? null : _takeLogoPhoto,
+                  icon: const Icon(Icons.camera_alt_outlined),
+                  label: Text(
+                    _choosingLogo
+                        ? 'Abriendo cámara...'
+                        : 'Tomar foto del logo',
                   ),
                 ),
                 if (_logo != null)

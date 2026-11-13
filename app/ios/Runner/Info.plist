@@ -24,6 +24,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>FutSchool usa la cámara cuando eliges tomar una foto para el logo de tu equipo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>FutSchool permite elegir una imagen para el logo de tu equipo.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Tu ubicación aproximada permite consultar el clima de la jornada cuando tú lo solicitas.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
